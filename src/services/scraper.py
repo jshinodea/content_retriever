@@ -1,15 +1,14 @@
 """
 Web Scraper Service Module
 
-This module handles web scraping using Nodriver for authenticated and dynamic websites.
+This module handles web scraping using nodriver for authenticated and dynamic websites.
 """
 
 import asyncio
 from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin, urlparse
 
-from nodriver.browser import NoDriver
-from nodriver.caseless import CaselessDict
+import nodriver
 
 from core.config import settings
 from utils.logger import get_logger
@@ -17,12 +16,11 @@ from utils.logger import get_logger
 logger = get_logger(__name__)
 
 class WebScraper:
-    """Service for web scraping using Nodriver."""
+    """Service for web scraping using nodriver."""
     
     def __init__(self):
         """Initialize the web scraper."""
-        self.driver = NoDriver()
-        self.session_cookies = CaselessDict()
+        self.browser = None
     
     async def scrape(
         self,
@@ -42,34 +40,33 @@ class WebScraper:
             Dictionary containing scraped content
         """
         try:
-            # Configure driver
-            self.driver.set_user_agent(settings.USER_AGENT)
-            self.driver.set_timeout(settings.DEFAULT_TIMEOUT)
+            # Start browser
+            self.browser = await nodriver.start()
             
             # Handle authentication if needed
             if auth_credentials:
                 await self._handle_authentication(url, auth_credentials)
             
             # Navigate to URL
-            response = await self.driver.get(url)
+            page = await self.browser.get(url)
             
-            if not response.ok:
-                logger.error(f"Failed to load URL {url}: {response.status_code}")
+            # Wait for content to load
+            content = await page.get_content()
+            if not content:
+                logger.error(f"Failed to load URL {url}")
                 return {"items": []}
             
             # Extract content
-            content = await self._extract_content(selectors)
+            items = await self._extract_content(page, selectors)
             
-            # Store cookies for future requests
-            self.session_cookies.update(self.driver.get_cookies())
-            
-            return {"items": content}
+            return {"items": items}
             
         except Exception as e:
             logger.error(f"Error scraping URL {url}: {str(e)}")
             return {"items": []}
         finally:
-            await self.driver.close()
+            if self.browser:
+                await self.browser.close()
     
     async def _handle_authentication(
         self,
@@ -82,29 +79,23 @@ class WebScraper:
             domain = urlparse(url).netloc
             login_url = f"https://{domain}/login"  # Adjust based on site
             
-            response = await self.driver.get(login_url)
-            if not response.ok:
-                raise Exception(f"Failed to load login page: {response.status_code}")
+            login_page = await self.browser.get(login_url)
             
             # Find and fill login form
-            username_field = await self.driver.find_element('input[type="text"]')
-            password_field = await self.driver.find_element('input[type="password"]')
-            submit_button = await self.driver.find_element('button[type="submit"]')
+            username_field = await login_page.select('input[type="text"]')
+            password_field = await login_page.select('input[type="password"]')
+            submit_button = await login_page.select('button[type="submit"]')
             
             if not all([username_field, password_field, submit_button]):
                 raise Exception("Could not find login form elements")
             
             # Fill credentials
-            await username_field.type(credentials.get("username", ""))
-            await password_field.type(credentials.get("password", ""))
-            await submit_button.click()
+            await username_field[0].type(credentials.get("username", ""))
+            await password_field[0].type(credentials.get("password", ""))
+            await submit_button[0].click()
             
             # Wait for navigation
             await asyncio.sleep(2)
-            
-            # Check if login was successful
-            if "/login" in self.driver.current_url:
-                raise Exception("Login failed - still on login page")
             
         except Exception as e:
             logger.error(f"Authentication failed: {str(e)}")
@@ -112,20 +103,22 @@ class WebScraper:
     
     async def _extract_content(
         self,
+        page,
         selectors: Optional[Dict[str, str]] = None
     ) -> List[Dict[str, Any]]:
         """Extract content using provided selectors or default extraction."""
         try:
             if selectors:
-                return await self._extract_with_selectors(selectors)
+                return await self._extract_with_selectors(page, selectors)
             else:
-                return await self._extract_default()
+                return await self._extract_default(page)
         except Exception as e:
             logger.error(f"Error extracting content: {str(e)}")
             return []
     
     async def _extract_with_selectors(
         self,
+        page,
         selectors: Dict[str, str]
     ) -> List[Dict[str, Any]]:
         """Extract content using specific CSS selectors."""
@@ -133,9 +126,7 @@ class WebScraper:
         
         try:
             # Find all item containers
-            containers = await self.driver.find_elements(
-                selectors.get("container", "article")
-            )
+            containers = await page.select_all(selectors.get("container", "article"))
             
             for container in containers:
                 item = {}
@@ -145,17 +136,18 @@ class WebScraper:
                     if field == "container":
                         continue
                         
-                    elements = await container.find_elements(selector)
+                    elements = await container.select_all(selector)
                     if elements:
+                        element = elements[0]
                         # Handle different field types
                         if field.endswith("_url"):
-                            value = await elements[0].get_attribute("href")
-                            value = urljoin(self.driver.current_url, value)
+                            value = await element.get_attribute("href")
+                            value = urljoin(page.url, value)
                         elif field.endswith("_image"):
-                            value = await elements[0].get_attribute("src")
-                            value = urljoin(self.driver.current_url, value)
+                            value = await element.get_attribute("src")
+                            value = urljoin(page.url, value)
                         else:
-                            value = await elements[0].text
+                            value = await element.text()
                         
                         item[field] = value
                 
@@ -168,36 +160,36 @@ class WebScraper:
             logger.error(f"Error extracting with selectors: {str(e)}")
             return []
     
-    async def _extract_default(self) -> List[Dict[str, Any]]:
+    async def _extract_default(self, page) -> List[Dict[str, Any]]:
         """Extract content using default extraction strategy."""
         items = []
         
         try:
             # Extract main content area
-            main_content = await self.driver.find_elements("main, article, .content")
+            main_content = await page.select_all("main, article, .content")
             
             if not main_content:
-                main_content = await self.driver.find_elements("body")
+                main_content = await page.select_all("body")
             
             for section in main_content:
                 # Extract text content
-                text_content = await section.text
+                text_content = await section.text()
                 
                 # Extract links
-                links = await section.find_elements("a")
+                links = await section.select_all("a")
                 urls = []
                 for link in links:
                     href = await link.get_attribute("href")
                     if href:
-                        urls.append(urljoin(self.driver.current_url, href))
+                        urls.append(urljoin(page.url, href))
                 
                 # Extract images
-                images = await section.find_elements("img")
+                images = await section.select_all("img")
                 image_urls = []
                 for img in images:
                     src = await img.get_attribute("src")
                     if src:
-                        image_urls.append(urljoin(self.driver.current_url, src))
+                        image_urls.append(urljoin(page.url, src))
                 
                 items.append({
                     "text": text_content,
