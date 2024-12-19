@@ -1,4 +1,5 @@
 pydantic>=2.5.2
+pydantic-settings>=2.1.0
 nodriver>=0.1.5
 tavily-python>=0.2.6
 cassandra-driver>=3.28.0
