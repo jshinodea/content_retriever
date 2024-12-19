@@ -1,0 +1,17 @@
+1|# Environment setup
+2|env >> /etc/environment;
+3|mkdir -p ${DATA_DIRECTORY:-/workspace};
+4|
+5|# Install system dependencies
+6|apt-get update && apt-get install -y python3-pip git;
+7|
+8|# Clone and setup project
+9|cd ${DATA_DIRECTORY:-/workspace};
+10|git clone https://github.com/jshinodea/content_retriever.git;
+11|cd content_retriever;
+12|
+13|# Install Python dependencies
+14|pip install -r requirements.txt;
+15|
+16|# Start the application
+17|python src/main.py 

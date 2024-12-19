@@ -8,7 +8,7 @@ import asyncio
 from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin, urlparse
 
-from nodriver import NoDriver
+from nodriver.browser import NoDriver
 from nodriver.caseless import CaselessDict
 
 from core.config import settings
