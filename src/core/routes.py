@@ -4,7 +4,10 @@ API Routes Module
 This module defines the FastAPI routes for the content retrieval system.
 """
 
+from pathlib import Path
 from fastapi import APIRouter, HTTPException, WebSocket
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, HttpUrl
 
 from models.content import ContentRequest, ContentResponse
@@ -13,6 +16,15 @@ from services.websocket import WebSocketManager
 
 router = APIRouter()
 ws_manager = WebSocketManager()
+
+# Mount static files
+static_path = Path(__file__).parent.parent / "frontend" / "static"
+router.mount("/static", StaticFiles(directory=str(static_path)), name="static")
+
+@router.get("/")
+async def get_index():
+    """Serve the main HTML page."""
+    return FileResponse(str(static_path / "index.html"))
 
 class TaskRequest(BaseModel):
     """Content retrieval task request model."""
