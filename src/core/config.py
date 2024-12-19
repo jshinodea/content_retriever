@@ -20,9 +20,9 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     
-    # API Keys
-    TAVILY_API_KEY: str
-    HF_ACCESS_TOKEN: str
+    # API Keys - Optional since they're managed through UI
+    TAVILY_API_KEY: Optional[str] = None
+    HF_ACCESS_TOKEN: Optional[str] = None
     
     # Database settings
     CASSANDRA_HOSTS: list[str] = ["localhost"]
