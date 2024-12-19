@@ -1,0 +1,474 @@
+# AI Development Continuity Rules
+
+You are an AI coding agent tasked with developing maintainable, well-documented software. Your primary objectives are:
+1. Write clean, modular, and well-documented code
+2. Maintain comprehensive development logs
+3. Follow software development best practices
+4. Enable seamless project handoff
+
+Every time you apply rule(s), explicitly state them in the output using abbreviated descriptions.
+
+## Code Documentation Requirements
+
+1. Comments Structure:
+   ```
+   # Section Header
+   #----------------
+   
+   # Description: Brief overview of what this code does
+   # Dependencies: List required modules/libraries
+   # Input: Expected input parameters
+   # Output: Expected return values
+   # Author: AI Agent ID
+   # Last Modified: YYYY-MM-DD
+   
+   def example_function():
+       # Explain complex logic here
+       
+       # TODO: Implement error handling
+       # TODO: Add input validation
+       pass
+   ```
+
+2. Required Comment Types:
+   - Function/method purpose
+   - Complex logic explanation
+   - Known limitations
+   - TODO items for incomplete features
+   - Edge cases handling
+   - Performance considerations
+
+## Development Log Protocol
+
+1. Create/Update development_log.md:
+   ```
+   ## [2024-12-18 15:30] Feature Implementation
+   
+   ### Applied Rules
+   - DRY, SOLID
+   
+   ### Changes
+   - Implemented user authentication
+   - Reason: Security requirement
+   
+   ### Current State
+   - Authentication ready
+   - Session management pending
+   
+   ### Next Steps
+   1. Implement session handling
+   2. Add rate limiting
+   ```
+
+## Example Implementation
+
+```
+# Authentication Module
+#---------------------
+# Description: Handles user authentication and session management
+# Dependencies: bcrypt, jwt
+# Author: AI-Agent-001
+# Last Modified: 2024-12-18
+
+class UserAuth:
+    def __init__(self):
+        # Initialize authentication service
+        # TODO: Add configuration loading
+        pass
+    
+    def authenticate_user(self, credentials):
+        """
+        Validates user credentials and generates session token
+        
+        Args:
+            credentials (dict): Username and password
+        Returns:
+            str: JWT token if successful
+        """
+        # TODO: Implement password validation
+        # TODO: Add rate limiting
+        pass
+
+## Code Structure Rules
+
+1. Modularity:
+   - Create independent, self-contained modules
+   - Define clear module interfaces
+   - Implement loose coupling between components
+   - Document module dependencies
+
+2. Maintainability:
+   - Follow single responsibility principle
+   - Keep methods under 20 lines
+   - Maximum file length of 400 lines
+   - Use meaningful variable/function names
+   - Document complex algorithms
+
+3. Reusability:
+   - Create generic, configurable components
+   - Avoid hard-coded values
+   - Implement dependency injection
+   - Document component requirements
+
+## Standardization
+
+1. Code Formatting:
+   ```
+   {
+     "indentation": "2 spaces",
+     "lineLength": 80,
+     "quoteStyle": "single",
+     "semicolons": true,
+     "trailingComma": "es5"
+   }
+   ```
+
+2. Naming Conventions:
+   - camelCase for variables/functions
+   - PascalCase for classes
+   - UPPER_SNAKE_CASE for constants
+   - kebab-case for file names
+
+3. Documentation Format:
+   ```
+   /**
+    * @description Brief description
+    * @param {type} name - Parameter description
+    * @returns {type} Return value description
+    * @throws {ErrorType} Error description
+    */
+   ```
+
+## Version Control
+
+1. Commit Messages:
+   ```
+   type(scope): description
+   
+   - feat: new feature
+   - fix: bug fix
+   - refactor: code restructuring
+   - docs: documentation updates
+   - style: formatting changes
+   - test: test additions/updates
+   ```
+
+2. Branch Management:
+   - feature/description
+   - bugfix/description
+   - hotfix/description
+
+## Testing Requirements
+
+1. Unit Tests:
+   - Test file for each module
+   - 80% minimum coverage
+   - Mock external dependencies
+   - Test edge cases
+
+2. Integration Tests:
+   - Test component interactions
+   - Validate data flow
+   - Test error handling
+
+## Security Practices
+
+1. Code Security:
+   - Input validation
+   - Output sanitization
+   - Secure authentication
+   - Authorization checks
+   - Protection against common vulnerabilities
+
+2. Data Security:
+   - Encryption requirements
+   - Secure storage practices
+   - Data access controls
+   - Privacy compliance
+
+## Performance Guidelines
+
+1. Optimization Rules:
+   - Minimize API calls
+   - Implement caching
+   - Optimize database queries
+   - Use appropriate data structures
+   - Consider time/space complexity
+
+2. Resource Management:
+   - Memory usage limits
+   - Connection pooling
+   - Resource cleanup
+   - Load balancing considerations
+
+## Web Development Principles
+
+1. Progressive Enhancement:
+   - Core functionality first
+   - Layer additional features
+   - Graceful degradation
+   - Browser compatibility
+
+2. Responsive Design:
+   - Mobile-first approach
+   - Fluid layouts
+   - Breakpoint strategy
+   - Device compatibility
+
+3. Accessibility (A11Y):
+   - WCAG compliance
+   - Semantic HTML
+   - ARIA attributes
+   - Keyboard navigation
+
+4. Performance:
+   - Critical rendering path
+   - Asset optimization
+   - Lazy loading
+   - Caching strategy
+
+## API Design Principles
+
+1. RESTful Guidelines:
+   - Resource-oriented design
+   - Proper HTTP methods
+   - Consistent endpoints
+   - Stateless operations
+
+2. API Versioning:
+   - Version strategy
+   - Backward compatibility
+   - Migration path
+   - Documentation updates
+
+3. Rate Limiting:
+   - Request quotas
+   - Throttling rules
+   - Error responses
+   - Usage monitoring
+
+## Database Principles
+
+1. Normalization Rules:
+   - Proper table structure
+   - Relationship design
+   - Index optimization
+   - Query efficiency
+
+2. Data Integrity:
+   - Constraint management
+   - Transaction handling
+   - Backup strategies
+   - Recovery procedures
+
+## DevOps Principles
+
+1. CI/CD:
+   - Automated testing
+   - Continuous integration
+   - Deployment automation
+   - Environment parity
+
+2. Infrastructure as Code:
+   - Configuration management
+   - Environment reproducibility
+   - Version control
+   - Documentation
+
+## Chain of Thought Development Process
+
+1. Requirement Analysis:
+   - Understand feature requirements
+   - Identify dependencies
+   - Plan implementation approach
+
+2. Implementation Strategy:
+   - Break down into smaller tasks
+   - Identify reusable components
+   - Plan testing approach
+
+3. Development Steps:
+   - Write tests first
+   - Implement core functionality
+   - Add error handling
+   - Optimize performance
+   - Document thoroughly
+
+4. Review Process:
+   - Verify requirements met
+   - Check code quality
+   - Run test suite
+   - Update documentation
+
+## Development Process Requirements
+
+1. Planning Phase:
+   ```
+   # Planning Template
+   
+   ## Feature Overview
+   - Description
+   - Requirements
+   - Dependencies
+   
+   ## Pseudocode
+   [Detailed algorithm/logic outline]
+   
+   ## Implementation Steps
+   1. [Step-by-step breakdown]
+   
+   ## Testing Strategy
+   - Unit tests
+   - Integration points
+   - Edge cases
+   ```
+
+2. Implementation Protocol:
+   - Confirm planning documentation
+   - Follow pseudocode outline
+   - Mark incomplete sections with TODO
+   - Document assumptions
+   - Track dependencies
+
+3. Code Review Checklist:
+   - Requirements fulfilled
+   - Best practices followed
+   - Security measures implemented
+   - Performance optimized
+   - Documentation complete
+   - Tests passing
+   - Cross-platform compatibility
+   - Error handling comprehensive
+
+4. Project Maintenance:
+   - Return edited files post-session
+   - Update affected components
+   - Maintain documentation
+   - Review security implications
+   - Check dependency versions
+   - Validate configuration
+
+## Code Quality Requirements
+
+1. Readability Standards:
+   - Self-documenting code
+   - Clear naming conventions
+   - Proper indentation
+   - Logical organization
+   - Meaningful comments
+
+2. Modularity Requirements:
+   - Independent components
+   - Clear interfaces
+   - Loose coupling
+   - High cohesion
+   - Reusable modules
+
+3. Security Standards:
+   - No hardcoded credentials
+   - Secure configuration
+   - Input validation
+   - Output sanitization
+   - Error handling
+   - Vulnerability prevention
+
+## Prohibited Practices
+
+1. Development Don'ts:
+   - Incomplete code without TODOs
+   - Unclear requirements implementation
+   - Security vulnerability ignorance
+   - Tight coupling
+   - Over-engineering
+   - Assumption-based development
+   - Functionality reduction
+   - Isolated changes without impact analysis
+
+2. Code Quality Don'ts:
+   - Hard-coded sensitive data
+   - Missing error handling
+   - Incomplete documentation
+   - Ignored cross-platform compatibility
+   - Outdated dependencies
+   - Undocumented assumptions
+
+## Documentation Principles
+
+1. Documentation Standards:
+   - Clear structure
+   - Consistent formatting
+   - Regular updates
+   - Version tracking
+   - Usage examples
+
+2. Code Documentation:
+   ```
+   # Module: user_authentication.py
+   # Purpose: Handles user authentication and session management
+   # Dependencies: jwt, bcrypt
+   # Author: AI-Agent-001
+   # Created: 2024-12-18
+   
+   class UserAuthentication:
+       """
+       Manages user authentication and session handling.
+       
+       Attributes:
+           session_timeout (int): Session timeout in minutes
+           max_attempts (int): Maximum login attempts allowed
+       """
+   ```
+
+## Development Workflow
+
+1. Initial Setup:
+   - Environment configuration
+   - Dependency installation
+   - Project structure creation
+   - Version control initialization
+
+2. Feature Development:
+   - Requirements analysis
+   - Test creation
+   - Implementation
+   - Documentation update
+   - Code review
+   - Integration testing
+
+3. Deployment Process:
+   - Environment validation
+   - Security checks
+   - Performance testing
+   - Documentation review
+   - Backup verification
+   - Deployment execution
+
+## Error Prevention
+
+1. Common Pitfalls:
+   - Undefined behavior
+   - Race conditions
+   - Memory leaks
+   - Security vulnerabilities
+   - Performance bottlenecks
+
+2. Prevention Strategies:
+   - Code reviews
+   - Automated testing
+   - Static analysis
+   - Security scanning
+   - Performance profiling
+
+## Continuous Improvement
+
+1. Code Quality:
+   - Regular refactoring
+   - Technical debt management
+   - Pattern implementation
+   - Performance optimization
+
+2. Process Improvement:
+   - Workflow refinement
+   - Tool evaluation
+   - Documentation updates
+   - Security enhancement
